@@ -48,7 +48,7 @@
 </head>
 <body>
     <h1>Debaters Statistics</h1>
-    <form id="debater-form">
+    <form id="debater-form" style="display: none;">
         <label for="name">Name:</label>
         <input type="text" id="name" required>
 
@@ -103,6 +103,8 @@
     <script>
         const debaters = JSON.parse(localStorage.getItem("debaters")) || [];
         const allowedUsers = ["Kasssss", "Daaviet"];
+        const adminKey = "CrownedGoon123";
+        let isAdmin = false;
 
         // Función para mostrar la lista de debaters en la página
         function displayDebaters() {
@@ -135,6 +137,13 @@
             if (allowedUsers.includes(currentUsername)) {
                 document.getElementById("debater-form").style.display = "block";
             }
+
+            // Verificar si el usuario actual tiene permisos de administrador
+            const isAdminUser = localStorage.getItem("isAdmin");
+            if (isAdminUser === "true") {
+                isAdmin = true;
+                document.getElementById("admin-tools").style.display = "block";
+            }
         });
 
         // Añadir debater
@@ -159,7 +168,6 @@
 
             debaters.push(debater);
             localStorage.setItem("debaters", JSON.stringify(debaters));
-
             displayDebaters();
 
             document.getElementById("name").value = "";
@@ -170,7 +178,7 @@
             document.getElementById("ties").value = "";
         });
 
-        // Eliminar debater
+        // Función para eliminar un debater
         function deleteDebater(name) {
             const index = debaters.findIndex(debater => debater.name === name);
             if (index !== -1) {
@@ -179,7 +187,103 @@
                 displayDebaters();
             }
         }
+
+        // Función para realizar el inicio de sesión
+        document.getElementById("register-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            localStorage.setItem("currentUsername", username);
+
+            if (password === adminKey) {
+                localStorage.setItem("isAdmin", "true");
+                isAdmin = true;
+                document.getElementById("admin-tools").style.display = "block";
+            }
+
+            document.getElementById("auth-container").style.display = "none";
+            document.getElementById("user-info").style.display = "block";
+            document.getElementById("current-username").textContent = username;
+        });
+
+        // Función para realizar el cierre de sesión
+        function logout() {
+            localStorage.removeItem("currentUsername");
+            localStorage.removeItem("isAdmin");
+            isAdmin = false;
+            document.getElementById("auth-container").style.display = "block";
+            document.getElementById("admin-tools").style.display = "none";
+            document.getElementById("user-info").style.display = "none";
+        }
+
+        // Función para otorgar permisos de administrador a un usuario
+        function makeAdmin() {
+            const username = document.getElementById("make-admin-username").value;
+            allowedUsers.push(username);
+            document.getElementById("make-admin-username").value = "";
+        }
+
+        // Cerrar el modal
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+        }
     </script>
+
+    <div id="admin-tools" style="display: none;">
+        <label for="make-admin-username">Make admin:</label>
+        <input type="text" id="make-admin-username">
+        <button onclick="makeAdmin()">Make Admin</button>
+    </div>
+
+    <div id="user-info" style="display: none;">
+        Usuario: <span id="current-username"></span>
+        <button onclick="logout()">Cerrar sesión</button>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="debater-name"></h2>
+            <p><strong>Promedio de victorias:</strong> <span id="debater-average-wins"></span></p>
+            <p><strong>Debaters vencidos:</strong></p>
+            <ul id="debater-defeated-list"></ul>
+        </div>
+    </div>
+    
+    <table>
+    <tr>
+        <th>Valor de tier</th>
+        <th>Vt</th>
+    </tr>
+    <tr>
+        <td>S</td>
+        <td>12</td>
+    </tr>
+    <tr>
+        <td>A</td>
+        <td>10</td>
+    </tr>
+    <tr>
+        <td>B+</td>
+        <td>8</td>
+    </tr>
+    <tr>
+        <td>B</td>
+        <td>6</td>
+    </tr>
+    <tr>
+        <td>C+</td>
+        <td>4</td>
+    </tr>
+    <tr>
+        <td>C</td>
+        <td>2</td>
+    </tr>
+</table>
+
+    <script src="script.js"></script>
 </body>
 </html>
 
