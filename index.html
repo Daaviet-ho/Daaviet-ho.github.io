@@ -102,83 +102,95 @@
     
     <script>
         const debaters = JSON.parse(localStorage.getItem("debaters")) || [];
-        const currentUsername = "Daaviet"; // Cambia esto al nombre de usuario correcto
 
         // Función para mostrar la lista de debaters en la página
         function displayDebaters() {
-            const debaterTable = document.getElementById("debater-table");
-            debaterTable.innerHTML = ""; // Limpiar la tabla antes de agregar los debaters
+            const debaterList = document.getElementById("debater-list");
+            debaterList.innerHTML = ""; // Limpiar la lista antes de agregar los debaters
 
             debaters.forEach(debater => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${debater.name}</td>
-                    <td>${debater.tier}</td>
-                    <td>${debater.debates}</td>
-                    <td>${debater.wins}</td>
-                    <td>${debater.losses}</td>
-                    <td>${debater.ties}</td>
-                    <td>
-                        <button onclick="deleteDebater('${debater.name}')">Delete</button>
-                    </td>
-                `;
-                debaterTable.appendChild(row);
+                const listItem = document.createElement("li");
+                const link = document.createElement("a");
+                link.textContent = debater.name;
+                link.href = `detalles.html?name=${encodeURIComponent(debater.name)}`;
+                listItem.appendChild(link);
+                debaterList.appendChild(listItem);
             });
         }
 
         // Mostrar la lista de debaters al cargar la página
         window.addEventListener("load", function() {
             displayDebaters();
-
-            // Verificar si el usuario actual tiene permisos de administrador
-            if (currentUsername === "Daaviet") {
-                document.getElementById("admin-tools").style.display = "block";
-            }
         });
-
-        // Añadir debater
-        document.getElementById("debater-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            const name = document.getElementById("name").value;
-            const tier = document.getElementById("tier").value;
-            const debates = document.getElementById("debates").value;
-            const wins = document.getElementById("wins").value;
-            const losses = document.getElementById("losses").value;
-            const ties = document.getElementById("ties").value;
-
-            const debater = {
-                name,
-                tier,
-                debates,
-                wins,
-                losses,
-                ties
-            };
-
-            debaters.push(debater);
-            localStorage.setItem("debaters", JSON.stringify(debaters));
-
-            displayDebaters();
-
-            document.getElementById("name").value = "";
-            document.getElementById("tier").value = "S";
-            document.getElementById("debates").value = "";
-            document.getElementById("wins").value = "";
-            document.getElementById("losses").value = "";
-            document.getElementById("ties").value = "";
-        });
-
-        // Eliminar debater
-        function deleteDebater(name) {
-            const index = debaters.findIndex(debater => debater.name === name);
-            if (index !== -1) {
-                debaters.splice(index, 1);
-                localStorage.setItem("debaters", JSON.stringify(debaters));
-                displayDebaters();
-            }
-        }
     </script>
+
+
+
+    <div id="auth-container">
+        <form id="register-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            
+            <button type="submit">Register</button>
+        </form>
+        
+        <button onclick="login()">Login</button>
+    </div>
+    
+    <div id="admin-tools" style="display: none;">
+        <label for="make-admin-username">Make admin:</label>
+        <input type="text" id="make-admin-username">
+        <button onclick="makeAdmin()">Make Admin</button>
+    </div>
+
+    <div id="user-info" style="display: none;">
+        Usuario: <span id="current-username"></span>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="debater-name"></h2>
+            <p><strong>Promedio de victorias:</strong> <span id="debater-average-wins"></span></p>
+            <p><strong>Debaters vencidos:</strong></p>
+            <ul id="debater-defeated-list"></ul>
+        </div>
+    </div>
+    
+    <table>
+    <tr>
+        <th>Valor de tier</th>
+        <th>Vt</th>
+    </tr>
+    <tr>
+        <td>S</td>
+        <td>12</td>
+    </tr>
+    <tr>
+        <td>A</td>
+        <td>10</td>
+    </tr>
+    <tr>
+        <td>B+</td>
+        <td>8</td>
+    </tr>
+    <tr>
+        <td>B</td>
+        <td>6</td>
+    </tr>
+    <tr>
+        <td>C+</td>
+        <td>4</td>
+    </tr>
+    <tr>
+        <td>C</td>
+        <td>2</td>
+    </tr>
+</table>
+
+    <script src="script.js"></script>
 </body>
 </html>
-
