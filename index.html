@@ -101,8 +101,9 @@
     <!-- Resto del código HTML -->
     
     <script>
-        const debaters = JSON.parse(localStorage.getItem("debaters")) || [];
         let isAdmin = false; // Variable para almacenar el estado de administrador
+
+        const debaters = JSON.parse(localStorage.getItem("debaters")) || [];
 
         // Función para mostrar la lista de debaters en la página
         function displayDebaters() {
@@ -124,24 +125,25 @@
             displayDebaters();
         });
 
-        // Función para hacer a un usuario administrador
+        // Función para hacer administrador al usuario actual
         function makeAdmin() {
-            const adminKey = document.getElementById("admin-key").value;
-            
-            if (adminKey === "crownedgoon123") {
+            const claveAdminInput = document.getElementById("clave-admin");
+            const claveAdmin = claveAdminInput.value.trim();
+
+            if (claveAdmin === "crownedgoon123") {
                 isAdmin = true;
-                const currentUsername = document.getElementById("current-username");
-                currentUsername.textContent += " (Administrador)";
-
-                const adminMessage = document.createElement("p");
-                adminMessage.textContent = "¡Ahora tienes permisos de administrador!";
-                adminMessage.style.color = "green";
-                document.body.insertBefore(adminMessage, document.getElementById("admin-tools"));
+                alert("¡Ahora tienes permisos de administrador!");
+            } else {
+                alert("Clave de administrador incorrecta");
             }
+
+            claveAdminInput.value = ""; // Limpiar el campo de clave
         }
+
+        // Event listener para el botón "Make Admin"
+        const makeAdminButton = document.getElementById("make-admin-button");
+        makeAdminButton.addEventListener("click", makeAdmin);
     </script>
-
-
 
     <div id="auth-container">
         <form id="register-form">
@@ -157,10 +159,10 @@
         <button onclick="login()">Login</button>
     </div>
     
-    <div id="admin-tools">
-        <label for="make-admin-username">Clave Admin:</label>
-        <input type="password" id="admin-key" required>
-        <button onclick="makeAdmin()">Make Admin</button>
+    <div id="admin-tools" style="display: none;">
+        <label for="make-admin-username">Make admin:</label>
+        <input type="password" id="clave-admin" required>
+        <button id="make-admin-button">Make Admin</button>
     </div>
 
     <div id="user-info" style="display: none;">
@@ -211,4 +213,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
