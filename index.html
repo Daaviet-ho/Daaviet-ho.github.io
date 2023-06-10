@@ -122,9 +122,30 @@
         window.addEventListener("load", function() {
             displayDebaters();
         });
+
+        // Función para asignar permisos de administrador
+        function makeAdmin() {
+            const adminKey = "CrownedGoon123";
+            const adminField = document.getElementById("admin-key");
+
+            if (adminField.value === adminKey) {
+                // Asignar permisos de administrador al usuario actual
+                const currentUsername = document.getElementById("current-username").textContent;
+                const users = JSON.parse(localStorage.getItem("users")) || [];
+
+                users.forEach(user => {
+                    if (user.username === currentUsername) {
+                        user.isAdmin = true;
+                        localStorage.setItem("users", JSON.stringify(users));
+                        console.log("Permisos de administrador asignados correctamente.");
+                        return;
+                    }
+                });
+            } else {
+                console.log("Clave de administrador incorrecta.");
+            }
+        }
     </script>
-
-
 
     <div id="auth-container">
         <form id="register-form">
@@ -141,8 +162,8 @@
     </div>
     
     <div id="admin-tools" style="display: none;">
-        <label for="make-admin-username">Make admin:</label>
-        <input type="text" id="make-admin-username">
+        <label for="admin-key">Clave Admin:</label>
+        <input type="password" id="admin-key">
         <button onclick="makeAdmin()">Make Admin</button>
     </div>
 
@@ -194,3 +215,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
