@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalles del Debater</title>
+    <style>
+        .stats-box {
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .stats-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stats-value {
+            margin-bottom: 10px;
+        }
+
+        .delete-button {
+            background-color: #ff0000;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .calculate-button {
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Detalles del Debater</h1>
+
+    <h2 id="debater-name"></h2>
+
+    <div id="stats-list">
+        <h2>Estadísticas Detalladas</h2>
+    </div>
+
+    <h2>Añadir Estadísticas Detalladas</h2>
+
+    <form id="stats-form">
+        <label for="opponent">Debater Oponente:</label>
+        <input type="text" id="opponent" required>
+
+        <label for="difficulty">Dificultad del Debate:</label>
+        <input type="text" id="difficulty" required>
+
+        <label for="points">Número de Puntos en el Debate:</label>
+        <input type="number" id="points" required>
+
+        <label for="characters">Personajes Usados en el Debate:</label>
+        <input type="text" id="characters" required>
+
+        <label for="victory">Victoria:</label>
+        <input type="text" id="victory" required>
+
+        <button type="submit">Añadir Estadísticas</button>
+    </form>
+
+    <h2>Calcular Rendimiento y Promedio</h2>
+
+    <label for="vt">VT:</label>
+    <input type="number" id="vt" required>
+
+    <label for="cd">CD:</label>
+    <input type="number" id="cd" required>
+
+    <label for="pa">PA:</label>
+    <input type="number" id="pa" required>
+
+    <button id="calculate" class="calculate-button">Calcular</button>
+
+    <div id="rendimiento-result"></div>
+    <div id="promedio-result"></div>
+
+    <script>
+        // Obtener el nombre del debater de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const debaterName = urlParams.get("name");
+
+        // Mostrar el nombre del debater
+        document.getElementById("debater-name").textContent = `Debater: ${debaterName}`;
+
+        // Obtener las estadísticas específicas del debater
+        const savedStats = JSON.parse(localStorage.getItem("stats")) || [];
+        let debaterStats = savedStats.find(stats => stats.debaterName === debaterName);
+
+        // Mostrar las estadísticas en la lista
+        const statsList = document.getElementById("stats-list");
+        if (debaterStats) {
+            displayStats(debaterStats.stats);
+        }
+
+        function displayStats(stats) {
+            statsList.innerHTML = ""; // Limpiar la lista antes de agregar las estadísticas
+
+            stats.forEach((statsData, index) => {
+                const statsBox = document.createElement("div");
+                statsBox.classList.add("stats-box");
+
+                const opponentLabel = document.createElement("div");
+                opponentLabel.classList.add("stats-label");
+                opponentLabel.textContent = "Debater Oponente:";
+                statsBox.appendChild(opponentLabel);
+
+                const opponentValue = document.createElement("div");
+                opponentValue.classList.add("stats-value");
+                opponentValue.textContent = statsData.opponent;
+                statsBox.appendChild(opponentValue);
+
+                const difficultyLabel = document.createElement("div");
+                difficultyLabel.classList.add("stats-label");
+                difficultyLabel.textContent = "Dificultad del Debate:";
+                statsBox.appendChild(difficultyLabel);
+
+                const difficultyValue = document.createElement("div");
+                difficultyValue.classList.add("stats-value");
+                difficultyValue.textContent = statsData.difficulty;
+                statsBox.appendChild(difficultyValue);
+
+                const pointsLabel = document.createElement("div");
+                pointsLabel.classList.add("stats-label");
+                pointsLabel.textContent = "Número de Puntos en el Debate:";
+                statsBox.appendChild(pointsLabel);
+
+                const pointsValue = document.createElement("div");
+                pointsValue.classList.add("stats-value");
+                pointsValue.textContent = statsData.points;
+                statsBox.appendChild(pointsValue);
+
+                const charactersLabel = document.createElement("div");
+                charactersLabel.classList.add("stats-label");
+                charactersLabel.textContent = "Personajes Usados en el Debate:";
+                statsBox.appendChild(charactersLabel);
+
+                const charactersValue = document.createElement("div");
+                charactersValue.classList.add("stats-value");
+                charactersValue.textContent = statsData.characters;
+                statsBox.appendChild(charactersValue);
+
+                const victoryLabel = document.createElement("div");
+                victoryLabel.classList.add("stats-label");
+                victoryLabel.textContent = "Victoria:";
+                statsBox.appendChild(victoryLabel);
+
+                const victoryValue = document.createElement("div");
+                victoryValue.classList.add("stats-value");
+                victoryValue.textContent = statsData.victory;
+                statsBox.appendChild(victoryValue);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.classList.add("delete-button");
+                deleteButton.textContent = "Eliminar Estadística";
+                deleteButton.addEventListener("click", () => deleteStats(index));
+                statsBox.appendChild(deleteButton);
+
+                statsList.appendChild(statsBox);
+            });
+        }
+
+        // Manejar el evento de envío del formulario para añadir estadísticas detalladas
+        document.getElementById("stats-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Obtener los valores del formulario
+            const opponent = document.getElementById("opponent").value;
+            const difficulty = document.getElementById("difficulty").value;
+            const points = document.getElementById("points").value;
+            const characters = document.getElementById("characters").value;
+            const victory = document.getElementById("victory").value;
+
+            // Crear un objeto con las estadísticas detalladas
+            const statsData = {
+                opponent,
+                difficulty,
+                points,
+                characters,
+                victory
+            };
+
+            // Obtener las estadísticas guardadas en localStorage o inicializar un array vacío
+            let savedStats = JSON.parse(localStorage.getItem("stats")) || [];
+
+            // Filtrar las estadísticas por el debater específico
+            debaterStats = savedStats.find(stats => stats.debaterName === debaterName);
+
+            // Si no hay estadísticas para el debater, crear un objeto con sus estadísticas
+            if (!debaterStats) {
+                debaterStats = {
+                    debaterName,
+                    stats: []
+                };
+                savedStats.push(debaterStats);
+            }
+
+            // Agregar las nuevas estadísticas al array del debater específico
+            debaterStats.stats.push(statsData);
+
+            // Guardar las estadísticas actualizadas en localStorage
+            localStorage.setItem("stats", JSON.stringify(savedStats));
+
+            // Limpiar los campos del formulario
+            document.getElementById("opponent").value = "";
+            document.getElementById("difficulty").value = "";
+            document.getElementById("points").value = "";
+            document.getElementById("characters").value = "";
+            document.getElementById("victory").value = "";
+
+            // Actualizar la lista de estadísticas mostradas en la página
+            displayStats(debaterStats.stats);
+        });
+
+        // Calcular rendimiento y promedio
+        document.getElementById("calculate").addEventListener("click", function() {
+            const vt = Number(document.getElementById("vt").value);
+            const cd = Number(document.getElementById("cd").value);
+            const pa = Number(document.getElementById("pa").value);
+
+            if (!isNaN(vt) && !isNaN(cd) && !isNaN(pa)) {
+                const rendimiento = calculateRendimiento(cd, pa, vt);
+                const promedio = calculatePromedio(rendimiento, cd);
+
+                document.getElementById("rendimiento-result").textContent = `Rendimiento: ${rendimiento}`;
+                document.getElementById("promedio-result").textContent = `Promedio: ${promedio}`;
+
+                // Guardar el rendimiento y el promedio en localStorage
+                let savedStats = JSON.parse(localStorage.getItem("stats")) || [];
+                debaterStats = savedStats.find(stats => stats.debaterName === debaterName);
+                if (debaterStats) {
+                    debaterStats.rendimiento = rendimiento;
+                    debaterStats.promedio = promedio;
+                } else {
+                    debaterStats = {
+                        debaterName,
+                        rendimiento,
+                        promedio
+                    };
+                    savedStats.push(debaterStats);
+                }
+                localStorage.setItem("stats", JSON.stringify(savedStats));
+            }
+        });
+
+        function calculateRendimiento(cd, pa, vt) {
+            return (cd + pa) / vt;
+        }
+
+        function calculatePromedio(rendimiento, cd) {
+            return rendimiento / cd;
+        }
+
+        function deleteStats(index) {
+            // Obtener las estadísticas guardadas en localStorage
+            let savedStats = JSON.parse(localStorage.getItem("stats")) || [];
+
+            // Filtrar las estadísticas por el debater y eliminar la estadística en el índice especificado
+            const updatedStats = savedStats.map(stats => {
+                if (stats.debaterName === debaterName) {
+                    stats.stats.splice(index, 1);
+                }
+                return stats;
+            });
+
+            // Guardar las estadísticas actualizadas en localStorage
+            localStorage.setItem("stats", JSON.stringify(updatedStats));
+
+            // Volver a cargar la página para reflejar los cambios
+            location.reload();
+        }
+    </script>
+</body>
+</html>
+

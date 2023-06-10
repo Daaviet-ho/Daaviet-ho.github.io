@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Debaters Statistics</title>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+    
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+    
+
+</head>
+<body>
+    <h1>Debaters Statistics</h1>
+    <form id="debater-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+
+        <label for="tier">Tier:</label>
+        <select id="tier" required>
+            <option value="S">S</option>
+            <option value="A">A</option>
+            <option value="B+">B+</option>
+            <option value="B">B</option>
+            <option value="C+">C+</option>
+            <option value="C">C</option>
+        </select>
+
+        <label for="debates">Number of debates:</label>
+        <input type="number" id="debates" required>
+
+        <label for="wins">Number of wins:</label>
+        <input type="number" id="wins" required>
+
+        <label for="losses">Number of losses:</label>
+        <input type="number" id="losses" required>
+
+        <label for="ties">Number of ties:</label>
+        <input type="number" id="ties" required>
+
+        <button type="submit">Add Debater</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Tier</th>
+                <th>Debates</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Ties</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="debater-table">
+        </tbody>
+    </table>
+
+    <div id="user-info" style="display: none;">
+        Usuario: <span id="current-username"></span>
+        <button onclick="logout()">Cerrar sesión</button>
+    </div>
+    
+    <!-- Resto del código HTML -->
+    
+    <script>
+        const debaters = JSON.parse(localStorage.getItem("debaters")) || [];
+
+        // Función para mostrar la lista de debaters en la página
+        function displayDebaters() {
+            const debaterList = document.getElementById("debater-list");
+            debaterList.innerHTML = ""; // Limpiar la lista antes de agregar los debaters
+
+            debaters.forEach(debater => {
+                const listItem = document.createElement("li");
+                const link = document.createElement("a");
+                link.textContent = debater.name;
+                link.href = `detalles.html?name=${encodeURIComponent(debater.name)}`;
+                listItem.appendChild(link);
+                debaterList.appendChild(listItem);
+            });
+        }
+
+        // Mostrar la lista de debaters al cargar la página
+        window.addEventListener("load", function() {
+            displayDebaters();
+        });
+    </script>
+
+
+
+    <div id="auth-container">
+        <form id="register-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+            
+            <button type="submit">Register</button>
+        </form>
+        
+        <button onclick="login()">Login</button>
+    </div>
+    
+    <div id="admin-tools" style="display: none;">
+        <label for="make-admin-username">Make admin:</label>
+        <input type="text" id="make-admin-username">
+        <button onclick="makeAdmin()">Make Admin</button>
+    </div>
+
+    <div id="user-info" style="display: none;">
+        Usuario: <span id="current-username"></span>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="debater-name"></h2>
+            <p><strong>Promedio de victorias:</strong> <span id="debater-average-wins"></span></p>
+            <p><strong>Debaters vencidos:</strong></p>
+            <ul id="debater-defeated-list"></ul>
+        </div>
+    </div>
+    
+    <table>
+    <tr>
+        <th>Valor de tier</th>
+        <th>Vt</th>
+    </tr>
+    <tr>
+        <td>S</td>
+        <td>12</td>
+    </tr>
+    <tr>
+        <td>A</td>
+        <td>10</td>
+    </tr>
+    <tr>
+        <td>B+</td>
+        <td>8</td>
+    </tr>
+    <tr>
+        <td>B</td>
+        <td>6</td>
+    </tr>
+    <tr>
+        <td>C+</td>
+        <td>4</td>
+    </tr>
+    <tr>
+        <td>C</td>
+        <td>2</td>
+    </tr>
+</table>
+
+    <script src="script.js"></script>
+</body>
+</html>
