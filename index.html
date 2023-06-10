@@ -102,6 +102,7 @@
     
     <script>
         const debaters = JSON.parse(localStorage.getItem("debaters")) || [];
+        let isAdmin = false; // Variable para almacenar el estado de administrador
 
         // Función para mostrar la lista de debaters en la página
         function displayDebaters() {
@@ -122,6 +123,22 @@
         window.addEventListener("load", function() {
             displayDebaters();
         });
+
+        // Función para hacer a un usuario administrador
+        function makeAdmin() {
+            const adminKey = document.getElementById("admin-key").value;
+            
+            if (adminKey === "crownedgoon123") {
+                isAdmin = true;
+                const currentUsername = document.getElementById("current-username");
+                currentUsername.textContent += " (Administrador)";
+
+                const adminMessage = document.createElement("p");
+                adminMessage.textContent = "¡Ahora tienes permisos de administrador!";
+                adminMessage.style.color = "green";
+                document.body.insertBefore(adminMessage, document.getElementById("admin-tools"));
+            }
+        }
     </script>
 
 
@@ -194,3 +211,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
