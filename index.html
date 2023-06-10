@@ -140,14 +140,15 @@
         <button onclick="login()">Login</button>
     </div>
     
+    <div id="user-info" style="display: none;">
+        Usuario: <span id="current-username"></span>
+    </div>
+
     <div id="admin-tools" style="display: none;">
         <label for="make-admin-username">Make admin:</label>
         <input type="text" id="make-admin-username">
+        <input type="password" id="clave-admin" placeholder="Clave Admin">
         <button onclick="makeAdmin()">Make Admin</button>
-    </div>
-
-    <div id="user-info" style="display: none;">
-        Usuario: <span id="current-username"></span>
     </div>
 
     <div id="modal" class="modal">
@@ -191,34 +192,22 @@
     </tr>
 </table>
 
-<script>
-    const adminKeyInput = document.createElement("input");
-    adminKeyInput.type = "password";
-    adminKeyInput.id = "admin-key";
-    adminKeyInput.placeholder = "Clave Admin";
+    <script>
+        function makeAdmin() {
+            const claveAdmin = document.getElementById("clave-admin").value;
 
-    const makeAdminButton = document.createElement("button");
-    makeAdminButton.textContent = "Make Admin";
-    makeAdminButton.addEventListener("click", makeAdmin);
-
-    const adminToolsContainer = document.getElementById("admin-tools");
-    adminToolsContainer.appendChild(adminKeyInput);
-    adminToolsContainer.appendChild(makeAdminButton);
-
-    function makeAdmin() {
-        const adminKey = document.getElementById("admin-key").value;
-        if (adminKey === "crownedgoon123") {
-            const currentUsername = document.getElementById("current-username").textContent;
-            const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-            userInfo[currentUsername].admin = true;
-            localStorage.setItem("userInfo", JSON.stringify(userInfo));
-            alert("¡Ahora tienes permisos de administrador!");
-        } else {
-            alert("Clave Admin incorrecta. No se otorgaron permisos de administrador.");
+            if (claveAdmin === "crownedgoon123") {
+                const currentUsername = document.getElementById("current-username").textContent;
+                const userInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+                userInfo[currentUsername] = userInfo[currentUsername] || {};
+                userInfo[currentUsername].admin = true;
+                localStorage.setItem("userInfo", JSON.stringify(userInfo));
+                alert("¡Ahora tienes permisos de administrador!");
+            } else {
+                alert("Clave Admin incorrecta. No se otorgaron permisos de administrador.");
+            }
         }
-    }
-</script>
-
-<script src="script.js"></script>
+    </script>
+    <script src="script.js"></script>
 </body>
 </html>
